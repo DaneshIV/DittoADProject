@@ -44,7 +44,7 @@ const DashboardPage = () => {
     { name: 'KANSAI HIGH SOLID SUPER PREMIUM', price: 2200 },
   ];
 
-  const navigateToCategory = (category) => {
+  const navigateToCategory = (category: string) => {
     setSelectedCategory(category);
     navigate(category === 'ALL' ? '/dashboard' : `/dashboard-${category}`);
   };
