@@ -30,6 +30,8 @@ import {
   PieChartOutlined,
 } from "@mui/icons-material";
 
+import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
+
 import { FlexBetween } from ".";
 import profileImage from "../assets/profile.jpeg";
 import logoImage from "../assets/JAAS.png";
@@ -55,6 +57,10 @@ const navItems = [
   {
     text: "Transactions",
     icon: <ReceiptLongOutlined />,
+  },
+  {
+    text: "Feedback",
+    icon: <RateReviewOutlinedIcon />,
   },
   /*{
     text: "Geography",

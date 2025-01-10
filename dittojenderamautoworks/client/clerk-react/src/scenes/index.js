@@ -13,6 +13,7 @@ import Monthly from "./monthly";
 import Breakdown from "./breakdown";
 import Admin from "./admin";
 import Performance from "./performance";
+import Feedback from "./feedback";
 
 // export scenes
 export {
@@ -28,4 +29,5 @@ export {
   Breakdown,
   Admin,
   Performance,
+  Feedback,
 };
