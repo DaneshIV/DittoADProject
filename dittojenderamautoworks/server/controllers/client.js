@@ -6,6 +6,7 @@ import Product from "../models/Product.js";
 import ProductStat from "../models/ProductStat.js";
 import User from "../models/User.js";
 import Transaction from "../models/Transaction.js";
+import Feedback from "../models/Feedback.js";
 
 // Get Products
 export const getProducts = async (_, res) => {
@@ -116,3 +117,19 @@ export const getGeography = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+// Get Feedback
+
+export const getFeedback = async (req, res) => {
+  try {
+    const feedback = await Feedback.find()
+      .populate("customerId", "name email") // Populate customerId with `name` and `email` from the users collection
+      .populate("productId", "name price"); // Populate productId with `name` and `price` from the product collection
+
+    res.status(200).json(feedback);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
