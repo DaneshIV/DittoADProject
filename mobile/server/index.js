@@ -6,36 +6,38 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import morgan from "morgan";
 
-
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const bookingRoutes = require('./routes/bookingRoutes');
-require('dotenv').config(); // Load environment variables
+// Initialize dotenv
+dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 9000; // Use environment variable or default to 5001
 
 // Middleware
-app.use(cors());
+app.use(express.json());
+app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(morgan("common"));
 app.use(bodyParser.json());
-
-// MongoDB Connection
-const mongoURI = process.env.MONGO_URI; // Use the MongoDB URI from the environment variable
-
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log('Connected to MongoDB');
-  })
-  .catch((err) => {
-    console.error('Error connecting to MongoDB:', err);
-  });
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors());
 
 // Routes
-app.use('/api', bookingRoutes);
+app.use("/api", bookingRoutes);
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// MongoDB Connection Setup
+const PORT = process.env.PORT || 5001;
+const MONGODB_URL = process.env.MONGODB_URL;
+
+mongoose
+  .connect(MONGODB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port: ${PORT}`);
+      console.log("MongoDB connected successfully");
+    });
+  })
+  .catch((error) => {
+    console.log("MongoDB connection error:", error);
+  });
