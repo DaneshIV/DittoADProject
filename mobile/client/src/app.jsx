@@ -6,6 +6,7 @@ import { useUser } from '@clerk/clerk-react';
 // Components for different pages
 import LoginWrapper from './components/LoginWrapper';
 import Dashboard from './components/Dashboard';
+import BookingFeature from './components/BookingFeature';
 
 function App() {
   const { isSignedIn } = useUser();
@@ -26,6 +27,12 @@ function App() {
         <Route
           path="/dashboard"
           element={isSignedIn ? <Dashboard /> : <Navigate to="/login" replace />}
+        />
+        
+        {/* Booking Feature Route */}
+        <Route
+          path="/book-appointment"
+          element={isSignedIn ? <BookingFeature /> : <Navigate to="/login" replace />}
         />
       </Routes>
     </div>
