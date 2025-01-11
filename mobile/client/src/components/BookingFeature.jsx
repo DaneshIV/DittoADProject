@@ -49,11 +49,11 @@ const BookingFeature = () => {
   };
 
   const handleBooking = async () => {
-    if (!carNumberPlate) {
-      setBookingStatus('Please enter your car number plate.');
+    if (!selectedCarType || !selectedPaintJob || !selectedDate || !selectedTime || !carNumberPlate) {
+      alert("All fields are required!");
       return;
     }
-
+  
     const bookingData = {
       carType: selectedCarType,
       paintJob: selectedPaintJob,
@@ -61,9 +61,9 @@ const BookingFeature = () => {
       totalPrice,
       appointmentDate: selectedDate,
       appointmentTime: selectedTime,
-      carNumberPlate,  // Include car number plate in the booking data
+      carNumberPlate
     };
-
+  
     try {
       const response = await axios.post('http://localhost:5001/api/bookings', bookingData);
       setBookingStatus("Booking confirmed! " + response.data);
@@ -71,7 +71,6 @@ const BookingFeature = () => {
       setBookingStatus("Failed to save booking. Please try again.");
       console.error("Error creating booking:", error);
     }
-  
   };
 
   return (

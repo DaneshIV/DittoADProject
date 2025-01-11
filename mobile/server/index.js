@@ -19,48 +19,43 @@ mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // Define a Mongoose schema and model for bookings
 const bookingSchema = new mongoose.Schema({
-  carType: String,
-  paintJob: String,
-  additionalServices: [String],
-  totalPrice: Number,
-  appointmentDate: String,
-  appointmentTime: String,
-  carNumberPlate: String,
+  carType: { type: String, required: true },
+  paintJob: { type: String, required: true },
+  additionalServices: { type: [String], required: true },
+  totalPrice: { type: Number, required: true },
+  appointmentDate: { type: String, required: true },
+  appointmentTime: { type: String, required: true },
+  carNumberPlate: { type: String, required: true }
 });
 
 const Booking = mongoose.model('Booking', bookingSchema);
 
-// Routes
 app.post('/api/bookings', async (req, res) => {
   const { carType, paintJob, additionalServices, totalPrice, appointmentDate, appointmentTime, carNumberPlate } = req.body;
 
-  if (!carType || !paintJob || !appointmentDate || !appointmentTime || !carNumberPlate) {
+  if (!carType || !paintJob || !additionalServices || !totalPrice || !appointmentDate || !appointmentTime || !carNumberPlate) {
     return res.status(400).json({ message: 'All fields are required.' });
   }
 
-  const newBooking = new Booking({
-    carType,
-    paintJob,
-    additionalServices,
-    totalPrice,
-    appointmentDate,
-    appointmentTime,
-    carNumberPlate,
-  });
-
   try {
-    const savedBooking = await newBooking.save();
-    res.status(201).json({
-      message: 'Booking created successfully!',
-      booking: savedBooking
+    const booking = new Booking({
+      carType,
+      paintJob,
+      additionalServices,
+      totalPrice,
+      appointmentDate,
+      appointmentTime,
+      carNumberPlate
     });
+
+    await booking.save();
+    res.status(201).json({ message: 'Booking created successfully' });
   } catch (error) {
-    res.status(500).json({
-      message: 'Failed to create booking.',
-      error: error.message
-    });
+    console.error('Error saving booking:', error);
+    res.status(500).json({ message: 'Failed to save booking. Please try again.' });
   }
 });
+
 
 // Start the server
 app.listen(PORT, () => {
