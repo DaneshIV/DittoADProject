@@ -1,3 +1,12 @@
+import express from "express";
+import bodyParser from "body-parser";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from "dotenv";
+import helmet from "helmet";
+import morgan from "morgan";
+
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -6,7 +15,7 @@ const bookingRoutes = require('./routes/bookingRoutes');
 require('dotenv').config(); // Load environment variables
 
 const app = express();
-const PORT = process.env.PORT || 5001; // Use environment variable or default to 5001
+const PORT = process.env.PORT || 9000; // Use environment variable or default to 5001
 
 // Middleware
 app.use(cors());
