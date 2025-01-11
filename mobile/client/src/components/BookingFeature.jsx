@@ -65,7 +65,7 @@ const BookingFeature = () => {
     };
   
     try {
-      const response = await axios.post('http://localhost:5001/api/bookings', bookingData);
+      const response = await axios.post('http://localhost:5000/api/bookings', bookingData);
       setBookingStatus("Booking confirmed! " + response.data);
     } catch (error) {
       setBookingStatus("Failed to save booking. Please try again.");

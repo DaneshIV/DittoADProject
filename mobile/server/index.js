@@ -12,12 +12,17 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB Connection
-const mongoURI = process.env.MONGO_URI; // Ensure MONGO_URI is set in your .env file
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => console.error('Error connecting to MongoDB:', err));
+const mongoURI = process.env.MONGO_URI; // Mongo URI should be in .env file
 
-// Define a Mongoose schema and model for bookings
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((err) => {
+    console.error('Error connecting to MongoDB:', err);
+  });
+
+// Define Booking Schema
 const bookingSchema = new mongoose.Schema({
   carType: { type: String, required: true },
   paintJob: { type: String, required: true },
@@ -30,14 +35,17 @@ const bookingSchema = new mongoose.Schema({
 
 const Booking = mongoose.model('Booking', bookingSchema);
 
+// Routes
 app.post('/api/bookings', async (req, res) => {
   const { carType, paintJob, additionalServices, totalPrice, appointmentDate, appointmentTime, carNumberPlate } = req.body;
 
+  // Validate incoming data
   if (!carType || !paintJob || !additionalServices || !totalPrice || !appointmentDate || !appointmentTime || !carNumberPlate) {
     return res.status(400).json({ message: 'All fields are required.' });
   }
 
   try {
+    // Create new booking
     const booking = new Booking({
       carType,
       paintJob,
@@ -48,6 +56,7 @@ app.post('/api/bookings', async (req, res) => {
       carNumberPlate
     });
 
+    // Save booking to MongoDB
     await booking.save();
     res.status(201).json({ message: 'Booking created successfully' });
   } catch (error) {
@@ -55,7 +64,6 @@ app.post('/api/bookings', async (req, res) => {
     res.status(500).json({ message: 'Failed to save booking. Please try again.' });
   }
 });
-
 
 // Start the server
 app.listen(PORT, () => {

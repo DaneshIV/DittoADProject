@@ -1,18 +1,38 @@
 {
   "name": "server",
   "version": "1.0.0",
+  "description": "Modern Full Stack Admin Dashboard using MERN",
+  "keywords": [
+    "reactjs",
+    "react",
+    "admin-app",
+    "mern",
+    "mongodb",
+    "modern-ui/ux",
+    "js",
+    "javascript",
+    "html",
+    "css"
+  ],
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
+    "country-iso-2-to-3": "^1.1.0",
+    "dotenv": "^16.0.3",
     "express": "^4.21.2",
-    "mongoose": "^8.9.4"
+    "express-rate-limit": "^6.7.0",
+    "helmet": "^6.0.1",
+    "lodash": "^4.17.21",
+    "mongoose": "^7.8.3",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.9"
   }
 }
