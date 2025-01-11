@@ -278,6 +278,10 @@ const BookingFeature = () => {
   <Button onClick={printInvoice} variant="contained">
     Print Invoice
   </Button>
+
+  <Button onClick={printInvoice} variant="contained">
+    Payment
+  </Button>
 </div>
 
 {bookingStatus && <p>{bookingStatus}</p>}
