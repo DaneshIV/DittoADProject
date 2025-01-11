@@ -10,7 +10,12 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:5174' })); // Allow CORS for all origins
+app.use(
+  cors({
+    origin: /^http:\/\/localhost:\d+$/, // Allows any localhost port
+    credentials: true,
+  })
+);
 app.use(bodyParser.json());
 
 // MongoDB Connection
