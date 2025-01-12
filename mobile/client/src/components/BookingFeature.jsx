@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, TextField, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Typography, Paper } from '@mui/material';
+import { Button, TextField, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Typography, Paper, Modal, Box } from '@mui/material';
 
 const BookingFeature = () => {
   const [selectedCarType, setSelectedCarType] = useState('');
@@ -11,6 +11,8 @@ const BookingFeature = () => {
   const [selectedTime, setSelectedTime] = useState('');
   const [carNumberPlate, setCarNumberPlate] = useState('');  
   const [bookingStatus, setBookingStatus] = useState('');
+  const [receipt, setReceipt] = useState(null);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
 
   const priceList = [
     { name: "Mini A (Kancil, Viva, & DL)", paintJobs: { "Kansai Pro Clear": 1200, "Nippon High Solid": 1450, "Kansai High Shield Super Premium": 1650 } },
@@ -74,6 +76,11 @@ const BookingFeature = () => {
   };
 
   const printInvoice = () => {
+    if (!receipt) {
+      alert("Please upload your payment receipt first.");
+      return;
+    }
+  
     const invoiceData = {
       carType: selectedCarType,
       paintJob: selectedPaintJob,
@@ -85,143 +92,155 @@ const BookingFeature = () => {
     };
   
     const invoiceWindow = window.open('', 'Invoice', 'width=800,height=600');
-invoiceWindow.document.write(`
-  <html>
-    <head>
-      <title>Invoice</title>
-      <style>
-        body {
-          font-family: 'Arial', sans-serif;
-          padding: 20px;
-          background-color: #f9f9f9;
-        }
-        h1 {
-          text-align: center;
-          color: #333;
-        }
-        .invoice-box {
-          max-width: 800px;
-          margin: auto;
-          padding: 30px;
-          border: 1px solid #ccc;
-          box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-          background-color: #fff;
-          border-radius: 10px;
-        }
-        .invoice-box table {
-          width: 100%;
-          line-height: inherit;
-          text-align: left;
-          border-collapse: collapse;
-        }
-        .invoice-box table td {
-          padding: 10px;
-          vertical-align: top;
-        }
-        .invoice-box table tr td:nth-child(2) {
-          text-align: right;
-        }
-        .invoice-box table tr.top {
-          border-bottom: 2px solid #333;
-          padding-bottom: 20px;
-        }
-        .invoice-box table tr.top td.title {
-          font-size: 45px;
-          line-height: 45px;
-          color: #0056b3;
-          font-weight: bold;
-        }
-        .invoice-box table tr.information {
-          border-bottom: 2px solid #ddd;
-          padding-bottom: 20px;
-        }
-        .invoice-box table tr.information td {
-          padding-bottom: 10px;
-        }
-        .invoice-box table tr.heading {
-          background: #eee;
-          border-bottom: 1px solid #ddd;
-          font-weight: bold;
-        }
-        .invoice-box table tr.details {
-          padding-bottom: 20px;
-        }
-        .invoice-box table tr.item {
-          border-bottom: 1px solid #eee;
-        }
-        .invoice-box table tr.item.last {
-          border-bottom: none;
-        }
-        .invoice-box table tr.total {
-          font-weight: bold;
-          border-top: 2px solid #333;
-        }
-        .logo {
-          text-align: center;
-          margin-bottom: 20px;
-        }
-        .logo img {
-          width: 150px; /* Adjust as necessary */
-        }
-      </style>
-    </head>
-    <body>
-      <div class="invoice-box">
-        <div class="logo">
-          <img src="your-logo-url.png" alt="Company Logo" /> <!-- Replace with your logo URL -->
-        </div>
-        <table cellpadding="0" cellspacing="0">
-          <tr class="top">
-            <td colspan="2">
-              <table>
-                <tr>
-                  <td class="title">
-                    <h1>Invoice</h1>
-                  </td>
-                  <td>
-                    Date: ${new Date().toLocaleDateString()}<br />
-                    Time: ${new Date().toLocaleTimeString()}
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr class="information">
-            <td colspan="2">
-              <table>
-                <tr>
-                  <td>
-                    Car Number Plate: ${invoiceData.carNumberPlate}<br />
-                    Appointment Date: ${invoiceData.appointmentDate}<br />
-                    Appointment Time: ${invoiceData.appointmentTime}
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr class="heading">
-            <td>Car Type</td>
-            <td>${invoiceData.carType}</td>
-          </tr>
-          <tr class="heading">
-            <td>Paint Job</td>
-            <td>${invoiceData.paintJob}</td>
-          </tr>
-          <tr class="heading">
-            <td>Additional Services</td>
-            <td>${invoiceData.additionalServices.join(', ')}</td>
-          </tr>
-          <tr class="total">
-            <td></td>
-            <td>Total: ${invoiceData.totalPrice}</td>
-          </tr>
-        </table>
-      </div>
-    </body>
-  </html>
-`);
-invoiceWindow.document.close();
-invoiceWindow.print();
+    invoiceWindow.document.write(`
+      <html>
+        <head>
+          <title>Invoice</title>
+          <style>
+            body {
+              font-family: 'Arial', sans-serif;
+              padding: 20px;
+              background-color: #f9f9f9;
+            }
+            h1 {
+              text-align: center;
+              color: #333;
+            }
+            .invoice-box {
+              max-width: 800px;
+              margin: auto;
+              padding: 30px;
+              border: 1px solid #ccc;
+              box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+              background-color: #fff;
+              border-radius: 10px;
+            }
+            .invoice-box table {
+              width: 100%;
+              line-height: inherit;
+              text-align: left;
+              border-collapse: collapse;
+            }
+            .invoice-box table td {
+              padding: 10px;
+              vertical-align: top;
+            }
+            .invoice-box table tr td:nth-child(2) {
+              text-align: right;
+            }
+            .invoice-box table tr.top {
+              border-bottom: 2px solid #333;
+              padding-bottom: 20px;
+            }
+            .invoice-box table tr.top td.title {
+              font-size: 45px;
+              line-height: 45px;
+              color: #0056b3;
+              font-weight: bold;
+            }
+            .invoice-box table tr.information {
+              border-bottom: 2px solid #ddd;
+              padding-bottom: 20px;
+            }
+            .invoice-box table tr.information td {
+              padding-bottom: 10px;
+            }
+            .invoice-box table tr.heading {
+              background: #eee;
+              border-bottom: 1px solid #ddd;
+              font-weight: bold;
+            }
+            .invoice-box table tr.details {
+              padding-bottom: 20px;
+            }
+            .invoice-box table tr.item {
+              border-bottom: 1px solid #eee;
+            }
+            .invoice-box table tr.item.last {
+              border-bottom: none;
+            }
+            .invoice-box table tr.total {
+              font-weight: bold;
+              border-top: 2px solid #333;
+            }
+            .logo {
+              text-align: center;
+              margin-bottom: 20px;
+            }
+            .logo img {
+              width: 150px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="invoice-box">
+            <div class="logo">
+              <img src="your-logo-url.png" alt="Company Logo" />
+            </div>
+            <table cellpadding="0" cellspacing="0">
+              <tr class="top">
+                <td colspan="2">
+                  <table>
+                    <tr>
+                      <td class="title">
+                        <h1>Invoice</h1>
+                      </td>
+                      <td>
+                        Date: ${new Date().toLocaleDateString()}<br />
+                        Time: ${new Date().toLocaleTimeString()}
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr class="information">
+                <td colspan="2">
+                  <table>
+                    <tr>
+                      <td>
+                        Car Number Plate: ${invoiceData.carNumberPlate}<br />
+                        Appointment Date: ${invoiceData.appointmentDate}<br />
+                        Appointment Time: ${invoiceData.appointmentTime}
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr class="heading">
+                <td>Car Type</td>
+                <td>${invoiceData.carType}</td>
+              </tr>
+              <tr class="heading">
+                <td>Paint Job</td>
+                <td>${invoiceData.paintJob}</td>
+              </tr>
+              <tr class="heading">
+                <td>Additional Services</td>
+                <td>${invoiceData.additionalServices.join(', ')}</td>
+              </tr>
+              <tr class="total">
+                <td></td>
+                <td>Total: ${invoiceData.totalPrice}</td>
+              </tr>
+            </table>
+          </div>
+        </body>
+      </html>
+    `);
+    invoiceWindow.document.close();
+    invoiceWindow.print();
+  };
+
+  const handlePaymentModalClose = () => {
+    setPaymentModalOpen(false);
+  };
+
+  const handleReceiptUpload = (event) => {
+    setReceipt(event.target.files[0]);
+  };
+
+  const handlePayment = () => {
+    setPaymentModalOpen(true);
   };
 
   const handleBack = () => {
@@ -309,17 +328,45 @@ invoiceWindow.print();
           Print Invoice
         </Button>
 
-        <Button onClick={printInvoice} variant="contained" color="info" style={{ flex: 1 }}>
+        <Button onClick={handlePayment} variant="contained" color="info" style={{ flex: 1 }}>
           Payment
         </Button>
 
         <Button onClick={handleBack} variant="contained" color="default" style={{ flex: 1 }}>
           Back
         </Button>
-
       </div>
 
       {bookingStatus && <Typography variant="body1" align="center" style={{ marginTop: '20px', color: 'green' }}>{bookingStatus}</Typography>}
+
+      <Modal
+        open={paymentModalOpen}
+        onClose={handlePaymentModalClose}
+        aria-labelledby="payment-modal-title"
+        aria-describedby="payment-modal-description"
+      >
+        <Box style={{
+          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: 'white',
+          padding: '20px', borderRadius: '8px', boxShadow: 24
+        }}>
+          <Typography variant="h6">Payment</Typography>
+          <Typography variant="body1" style={{ marginBottom: '20px' }}>
+            Please upload your payment receipt to proceed with the invoice.
+          </Typography>
+          <img src="payment-image-url.jpg" alt="Payment Instructions" style={{ maxWidth: '100%', marginBottom: '20px' }} />
+          <input type="file" onChange={handleReceiptUpload} />
+          <div style={{ marginTop: '20px' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handlePaymentModalClose}
+              disabled={!receipt}
+            >
+              Close
+            </Button>
+          </div>
+        </Box>
+      </Modal>
     </Paper>
   );
 };
