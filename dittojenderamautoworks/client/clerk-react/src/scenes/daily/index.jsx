@@ -1,27 +1,29 @@
 import React, { useMemo, useState } from "react";
-import { Box, Typography, useTheme, TextField } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
+import DatePicker from "react-datepicker";
 import { ResponsiveLine } from "@nivo/line";
 
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs from 'dayjs'; 
+//import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+//import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+//import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import { useGetSalesQuery } from "../../state/api";
 import { Header } from "../../components";
 
+import "react-datepicker/dist/react-datepicker.css";
+
 // Daily
 const Daily = () => {
   // keep track of start & end date
-  const [startDate, setStartDate] = useState(dayjs("2021-02-01"));
-  const [endDate, setEndDate] = useState(dayjs("2021-03-01"));
+  const [startDate, setStartDate] = useState(new Date("2021-02-01"));
+  const [endDate, setEndDate] = useState(new Date("2021-03-01"));
 
   // get data
   const { data } = useGetSalesQuery();
   const theme = useTheme();
 
   // format data
-  const formattedData = useMemo(() => {
+  const [formattedData] = useMemo(() => {
     if (!data) return [];
 
     // daily data
@@ -44,27 +46,32 @@ const Daily = () => {
     // factor daily data
     Object.values(dailyData).forEach(({ date, totalSales, totalUnits }) => {
       // formatted date
-      const dateFormatted = dayjs(date);
-
-      if (dateFormatted.isAfter(startDate) && dateFormatted.isBefore(endDate)) {
+      const dateFormatted = new Date(date);
+      if (dateFormatted >= startDate && dateFormatted <= endDate) {
         const splitDate = date.substring(date.indexOf("-") + 1);
 
-        totalSalesLine.data.push({
+        totalSalesLine.data = [
+          ...totalSalesLine.data,
+          {
             x: splitDate,
             y: totalSales,
-        });
+          },
+        ];
 
-        totalUnitsLine.data.push({
+        totalUnitsLine.data = [
+          ...totalUnitsLine.data,
+          {
             x: splitDate,
             y: totalUnits,
-        });
+          },
+        ];
       }
     });
 
-    //const formattedData = [totalSalesLine, totalUnitsLine];
+    const formattedData = [totalSalesLine, totalUnitsLine];
 
-    return [totalSalesLine, totalUnitsLine];
-  }, [data, startDate, endDate, theme.palette.tables]); // eslint-disable-line react-hooks/exhaustive-deps
+    return [formattedData];
+  }, [data, startDate, endDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box m="1.5rem 2.5rem">
@@ -75,81 +82,30 @@ const Daily = () => {
       {data ? (
         <Box height="75vh">
           {/* Date Picker */}
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Box display="flex" justifyContent="flex-end">
-              {/* Start Date */}
-              <Box mr={2}>
-                <DatePicker
-                  label="Start Date"
-                  value={startDate}
-                  onChange={(newValue) => setStartDate(newValue)}
-                  renderInput={(params) => (
-                    <TextField
-                    {...params}
-                    InputLabelProps={{
-                      style: { color: theme.palette.tables.picker }, // Label color
-                    }}
-                    InputProps={{
-                      style: {
-                        color: theme.palette.tables.picker, // Text color
-                      },
-                    }}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        "& fieldset": {
-                          borderColor: theme.palette.tables.picker, // Default border
-                        },
-                        "&:hover fieldset": {
-                          borderColor: theme.palette.tables.picker, // Hover border
-                        },
-                        "&.Mui-focused fieldset": {
-                          borderColor: theme.palette.tables.picker, // Focused border
-                          },
-                        },
-                      }}
-                    />
-                  )}
-                />
-              </Box>
-
-              {/* End Date */}
-              <Box>
-                <DatePicker
-                  label="End Date"
-                  value={endDate}
-                  onChange={(newValue) => setEndDate(newValue)}  // Update state properly
-                  minDate={startDate}  // Ensure endDate can't be before startDate
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      InputLabelProps={{
-                        style: { color: theme.palette.primary.main }, // Label color
-                      }}
-                      InputProps={{
-                        style: {
-                          color: theme.palette.secondary.main, // Text color
-                          borderColor: theme.palette.primary.main, // Border color
-                        },
-                      }}
-                      sx={{
-                        ".MuiOutlinedInput-root": {
-                          "& fieldset": {
-                            borderColor: `${theme.palette.tables.picker} !important`, // Default border
-                          },
-                          "&:hover fieldset": {
-                            borderColor: `${theme.palette.tables.picker} !important`, // Hover border
-                          },
-                          "&.Mui-focused fieldset": {
-                            borderColor: `${theme.palette.tables.picker} !important`, // Focused border
-                          },
-                        },
-                      }}
-                    />
-                  )}
-                />
-              </Box>
+          <Box display="flex" justifyContent="flex-end">
+            {/* Start Date */}
+            <Box>
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+              />
             </Box>
-          </LocalizationProvider>
+
+            {/* End Date */}
+            <Box>
+              <DatePicker
+                selected={endDate}
+                onChange={(date) => setEndDate(date)}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate}
+              />
+            </Box>
+          </Box>
 
           {/* Line Chart */}
           <ResponsiveLine

@@ -83,7 +83,6 @@ export const themeSettings = (mode) => {
               background: tokensDark.primary[500],
               lines: tokensDark.primary[100],
               anotherLine: tokensDark.primary[300],
-              picker: tokensDark.grey[10],
             },
           }
           : {
@@ -120,7 +119,6 @@ export const themeSettings = (mode) => {
               background: tokensDark.secondary[30],
               lines: tokensDark.secondary[400],
               anotherLine: tokensDark.secondary[700],
-              picker: tokensDark.grey[1000],
             },
           }),
     },
