@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, TextField, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Typography, Paper, Modal, Box } from '@mui/material';
+import { Button, TextField, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Typography, Paper, Modal, Box, Rating } from '@mui/material';
 
 const BookingFeature = () => {
   const [selectedCarType, setSelectedCarType] = useState('');
@@ -9,10 +9,13 @@ const BookingFeature = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  const [carNumberPlate, setCarNumberPlate] = useState('');  
+  const [carNumberPlate, setCarNumberPlate] = useState('');
   const [bookingStatus, setBookingStatus] = useState('');
   const [receipt, setReceipt] = useState(null);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [isReceiptUploaded, setIsReceiptUploaded] = useState(false); // Track if receipt is uploaded
 
   const priceList = [
     { name: "Mini A (Kancil, Viva, & DL)", paintJobs: { "Kansai Pro Clear": 1200, "Nippon High Solid": 1450, "Kansai High Shield Super Premium": 1650 } },
@@ -44,7 +47,7 @@ const BookingFeature = () => {
     const carType = priceList.find(item => item.name === selectedCarType);
     if (carType && selectedPaintJob) {
       const paintJobPrice = carType.paintJobs[selectedPaintJob];
-      const additionalServiceCost = selectedAdditionalServices.length * 100; 
+      const additionalServiceCost = selectedAdditionalServices.length * 100;
       const total = paintJobPrice + additionalServiceCost;
       setTotalPrice(total);
     }
@@ -55,7 +58,7 @@ const BookingFeature = () => {
       alert("All fields are required!");
       return;
     }
-  
+
     const bookingData = {
       carType: selectedCarType,
       paintJob: selectedPaintJob,
@@ -65,10 +68,11 @@ const BookingFeature = () => {
       appointmentTime: selectedTime,
       carNumberPlate
     };
-  
+
     try {
       const response = await axios.post('http://localhost:5001/api/bookings', bookingData);
       setBookingStatus("Booking confirmed!");
+      setPaymentModalOpen(true);  // Open payment modal after confirming booking
     } catch (error) {
       setBookingStatus("Failed to save booking. Please try again.");
       console.error("Error creating booking:", error);
@@ -76,11 +80,11 @@ const BookingFeature = () => {
   };
 
   const printInvoice = () => {
-    if (!receipt) {
-      alert("Please upload your payment receipt first.");
+    if (!selectedCarType || !selectedPaintJob) {
+      alert("Please complete the booking details before printing the invoice.");
       return;
     }
-  
+
     const invoiceData = {
       carType: selectedCarType,
       paintJob: selectedPaintJob,
@@ -90,7 +94,7 @@ const BookingFeature = () => {
       appointmentTime: selectedTime,
       carNumberPlate
     };
-  
+
     const invoiceWindow = window.open('', 'Invoice', 'width=800,height=600');
     invoiceWindow.document.write(`
       <html>
@@ -163,20 +167,10 @@ const BookingFeature = () => {
               font-weight: bold;
               border-top: 2px solid #333;
             }
-            .logo {
-              text-align: center;
-              margin-bottom: 20px;
-            }
-            .logo img {
-              width: 150px;
-            }
           </style>
         </head>
         <body>
           <div class="invoice-box">
-            <div class="logo">
-              <img src="your-logo-url.png" alt="Company Logo" />
-            </div>
             <table cellpadding="0" cellspacing="0">
               <tr class="top">
                 <td colspan="2">
@@ -232,25 +226,29 @@ const BookingFeature = () => {
   };
 
   const handlePaymentModalClose = () => {
-    setPaymentModalOpen(false);
+    if (isReceiptUploaded) {
+      setPaymentModalOpen(false);
+      setFeedbackModalOpen(true);  // Show feedback modal after payment
+    } else {
+      alert("Please upload your payment receipt first.");
+    }
   };
 
   const handleReceiptUpload = (event) => {
     setReceipt(event.target.files[0]);
+    setIsReceiptUploaded(true);
   };
 
-  const handlePayment = () => {
-    setPaymentModalOpen(true);
-  };
-
-  const handleBack = () => {
-    window.history.back();
+  const handleFeedbackSubmit = () => {
+    alert(`Thank you for your feedback! You rated us ${rating} stars.`);
+    setFeedbackModalOpen(false);
   };
 
   return (
     <Paper elevation={3} style={{ padding: '20px', borderRadius: '8px', maxWidth: '600px', margin: 'auto', backgroundColor: '#f9f9f9' }}>
       <Typography variant="h4" align="center" style={{ marginBottom: '20px' }}>Car Painting Booking</Typography>
 
+      {/* Car Type Select */}
       <FormControl fullWidth variant="outlined" style={{ marginBottom: '20px' }}>
         <InputLabel>Car Type</InputLabel>
         <Select value={selectedCarType} onChange={handleCarTypeChange}>
@@ -260,16 +258,18 @@ const BookingFeature = () => {
         </Select>
       </FormControl>
 
+      {/* Paint Job Select */}
       <FormControl fullWidth variant="outlined" style={{ marginBottom: '20px' }}>
         <InputLabel>Paint Job</InputLabel>
         <Select value={selectedPaintJob} onChange={handlePaintJobChange}>
-          {selectedCarType && priceList.find(item => item.name === selectedCarType)?.paintJobs && 
+          {selectedCarType && priceList.find(item => item.name === selectedCarType)?.paintJobs &&
             Object.keys(priceList.find(item => item.name === selectedCarType).paintJobs).map((paintJob, index) => (
               <MenuItem key={index} value={paintJob}>{paintJob}</MenuItem>
             ))}
         </Select>
       </FormControl>
 
+      {/* Additional Services */}
       <FormControl fullWidth variant="outlined" style={{ marginBottom: '20px' }}>
         <InputLabel>Additional Services</InputLabel>
         <Select
@@ -287,88 +287,99 @@ const BookingFeature = () => {
         </Select>
       </FormControl>
 
-      <TextField
-        label="Car Number Plate"
-        value={carNumberPlate}
-        onChange={(e) => setCarNumberPlate(e.target.value)}
-        fullWidth
-        variant="outlined"
-        style={{ marginBottom: '20px' }}
-      />
-
-      <div style={{ marginBottom: '20px' }}>
-        <Typography variant="body1">Total Price: RM{totalPrice}</Typography>
+      {/* Booking Date and Time */}
+      <div style={{ display: 'flex', gap: '10px' }}>
         <TextField
           label="Appointment Date"
           type="date"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
           fullWidth
-          variant="outlined"
         />
-      </div>
-
-      <div style={{ marginBottom: '20px' }}>
         <TextField
           label="Appointment Time"
           type="time"
           value={selectedTime}
           onChange={(e) => setSelectedTime(e.target.value)}
           fullWidth
-          variant="outlined"
         />
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginTop: '10px' }}>
-        <Button onClick={handleBooking} variant="contained" color="primary" style={{ flex: 1 }}>
-          Confirm Booking
-        </Button>
+      {/* Car Number Plate */}
+      <TextField
+        label="Car Number Plate"
+        value={carNumberPlate}
+        onChange={(e) => setCarNumberPlate(e.target.value)}
+        fullWidth
+        style={{ marginBottom: '20px' }}
+      />
 
-        <Button onClick={printInvoice} variant="contained" color="secondary" style={{ flex: 1 }}>
-          Print Invoice
-        </Button>
+      {/* Total Price */}
+      <Typography variant="h6" style={{ marginBottom: '20px' }}>
+        Total Price: {totalPrice ? new Intl.NumberFormat('en-MY', { style: 'currency', currency: 'MYR' }).format(totalPrice) : 'RM 0.00'}
+      </Typography>
 
-        <Button onClick={handlePayment} variant="contained" color="info" style={{ flex: 1 }}>
-          Payment
-        </Button>
+      {/* Confirm Booking Button */}
+      <Button variant="contained" color="primary" fullWidth onClick={handleBooking}>
+        Confirm Booking
+      </Button>
 
-        <Button onClick={handleBack} variant="contained" color="default" style={{ flex: 1 }}>
-          Back
-        </Button>
-      </div>
+      {/* Print Invoice Button */}
+      <Button variant="outlined" color="secondary" fullWidth style={{ marginTop: '20px' }} onClick={printInvoice}>
+        Print Invoice
+      </Button>
 
-      {bookingStatus && <Typography variant="body1" align="center" style={{ marginTop: '20px', color: 'green' }}>{bookingStatus}</Typography>}
-
+      {/* Payment Modal */}
       <Modal
         open={paymentModalOpen}
-        onClose={handlePaymentModalClose}
-        aria-labelledby="payment-modal-title"
-        aria-describedby="payment-modal-description"
+        onClose={() => setPaymentModalOpen(false)}
       >
-        <Box style={{
-          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: 'white',
-          padding: '20px', borderRadius: '8px', boxShadow: 24
-        }}>
-          <Typography variant="h6">Payment</Typography>
-          <Typography variant="body1" style={{ marginBottom: '20px' }}>
-            Please upload your payment receipt to proceed with the invoice.
+        <Box style={{ ...modalStyle, width: 400 }}>
+          <Typography variant="h6">Make Payment</Typography>
+          <Typography variant="body1" align="center">
+            Scan QR code to pay
           </Typography>
-          <img src="payment-image-url.jpg" alt="Payment Instructions" style={{ maxWidth: '100%', marginBottom: '20px' }} />
-          <input type="file" onChange={handleReceiptUpload} />
+          <img src="/path/to/qr-code.png" alt="QR Code" style={{ width: '100%', marginBottom: '20px' }} />
+          <input type="file" accept="image/*,application/pdf" onChange={handleReceiptUpload} />
           <div style={{ marginTop: '20px' }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handlePaymentModalClose}
-              disabled={!receipt}
-            >
-              Close
+            <Button onClick={handlePaymentModalClose} variant="contained" color="primary">
+              Confirm Payment
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+
+      {/* Feedback Modal */}
+      <Modal
+        open={feedbackModalOpen}
+        onClose={() => setFeedbackModalOpen(false)}
+      >
+        <Box style={{ ...modalStyle, width: 400 }}>
+          <Typography variant="h6">Please Rate Your Experience</Typography>
+          <Rating
+            value={rating}
+            onChange={(event, newValue) => setRating(newValue)}
+            style={{ marginBottom: '20px' }}
+          />
+          <div style={{ marginTop: '20px' }}>
+            <Button onClick={handleFeedbackSubmit} variant="contained" color="primary">
+              Submit Feedback
             </Button>
           </div>
         </Box>
       </Modal>
     </Paper>
   );
+};
+
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  backgroundColor: 'white',
+  padding: '20px',
+  borderRadius: '8px',
 };
 
 export default BookingFeature;
