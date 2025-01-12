@@ -1,6 +1,32 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, TextField, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Typography, Paper, Modal, Box, Rating } from '@mui/material';
+import { 
+  Button, 
+  TextField, 
+  FormControl, 
+  InputLabel, 
+  Select, 
+  MenuItem, 
+  Checkbox, 
+  ListItemText, 
+  Typography, 
+  Paper, 
+  Modal, 
+  Box, 
+  Rating 
+} from '@mui/material';
+
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  backgroundColor: 'white',
+  padding: '20px',
+  borderRadius: '8px',
+  boxShadow: 24,
+  outline: 'none',
+};
 
 const BookingFeature = () => {
   const [selectedCarType, setSelectedCarType] = useState('');
@@ -15,7 +41,7 @@ const BookingFeature = () => {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const [rating, setRating] = useState(0);
-  const [isReceiptUploaded, setIsReceiptUploaded] = useState(false); // Track if receipt is uploaded
+  const [isReceiptUploaded, setIsReceiptUploaded] = useState(false);
 
   const priceList = [
     { name: "Mini A (Kancil, Viva, & DL)", paintJobs: { "Kansai Pro Clear": 1200, "Nippon High Solid": 1450, "Kansai High Shield Super Premium": 1650 } },
@@ -27,6 +53,15 @@ const BookingFeature = () => {
     { name: "MPV A (Alza, Avanza & DLL)", paintJobs: { "Kansai Pro Clear": 1700, "Nippon High Solid": 2000, "Kansai High Shield Super Premium": 2200 } },
     { name: "MPV B (Vellfire, Alphard & DLL)", paintJobs: { "Kansai Pro Clear": 2000, "Nippon High Solid": 2300, "Kansai High Shield Super Premium": 2500 } }
   ];
+
+  const availableTimeSlots = [
+    "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"
+  ];
+
+  const getAvailableTimeSlots = (date) => {
+    const isWeekend = new Date(date).getDay() === 0 || new Date(date).getDay() === 6;
+    return isWeekend ? availableTimeSlots.filter(time => time !== "09:00") : availableTimeSlots;
+  };
 
   const handleCarTypeChange = (event) => {
     setSelectedCarType(event.target.value);
@@ -72,7 +107,7 @@ const BookingFeature = () => {
     try {
       const response = await axios.post('http://localhost:5001/api/bookings', bookingData);
       setBookingStatus("Booking confirmed!");
-      setPaymentModalOpen(true);  // Open payment modal after confirming booking
+      setPaymentModalOpen(true);
     } catch (error) {
       setBookingStatus("Failed to save booking. Please try again.");
       console.error("Error creating booking:", error);
@@ -96,8 +131,8 @@ const BookingFeature = () => {
     };
 
     const invoiceWindow = window.open('', 'Invoice', 'width=800,height=600');
-    invoiceWindow.document.write(`
-      <html>
+    invoiceWindow.document.write(
+      `<html>
         <head>
           <title>Invoice</title>
           <style>
@@ -219,8 +254,8 @@ const BookingFeature = () => {
             </table>
           </div>
         </body>
-      </html>
-    `);
+      </html>`
+    );
     invoiceWindow.document.close();
     invoiceWindow.print();
   };
@@ -228,7 +263,7 @@ const BookingFeature = () => {
   const handlePaymentModalClose = () => {
     if (isReceiptUploaded) {
       setPaymentModalOpen(false);
-      setFeedbackModalOpen(true);  // Show feedback modal after payment
+      setFeedbackModalOpen(true);
     } else {
       alert("Please upload your payment receipt first.");
     }
@@ -246,7 +281,9 @@ const BookingFeature = () => {
 
   return (
     <Paper elevation={3} style={{ padding: '20px', borderRadius: '8px', maxWidth: '600px', margin: 'auto', backgroundColor: '#f9f9f9' }}>
-      <Typography variant="h4" align="center" style={{ marginBottom: '20px' }}>Car Painting Booking</Typography>
+      <Typography variant="h4" align="center" style={{ marginBottom: '20px' }}>
+        Car Painting Booking
+      </Typography>
 
       {/* Car Type Select */}
       <FormControl fullWidth variant="outlined" style={{ marginBottom: '20px' }}>
@@ -298,11 +335,16 @@ const BookingFeature = () => {
         />
         <TextField
           label="Appointment Time"
-          type="time"
+          select
           value={selectedTime}
           onChange={(e) => setSelectedTime(e.target.value)}
           fullWidth
-        />
+          disabled={!selectedDate}
+        >
+          {selectedDate && getAvailableTimeSlots(selectedDate).map((time, index) => (
+            <MenuItem key={index} value={time}>{time}</MenuItem>
+          ))}
+        </TextField>
       </div>
 
       {/* Car Number Plate */}
@@ -330,56 +372,28 @@ const BookingFeature = () => {
       </Button>
 
       {/* Payment Modal */}
-      <Modal
-        open={paymentModalOpen}
-        onClose={() => setPaymentModalOpen(false)}
-      >
+      <Modal open={paymentModalOpen} onClose={() => setPaymentModalOpen(false)}>
         <Box style={{ ...modalStyle, width: 400 }}>
-          <Typography variant="h6">Make Payment</Typography>
-          <Typography variant="body1" align="center">
-            Scan QR code to pay
-          </Typography>
-          <img src="/path/to/qr-code.png" alt="QR Code" style={{ width: '100%', marginBottom: '20px' }} />
-          <input type="file" accept="image/*,application/pdf" onChange={handleReceiptUpload} />
+          <Typography variant="h6">Upload Payment Receipt</Typography>
+          <input type="file" onChange={handleReceiptUpload} />
           <div style={{ marginTop: '20px' }}>
-            <Button onClick={handlePaymentModalClose} variant="contained" color="primary">
-              Confirm Payment
-            </Button>
+            <Button onClick={handlePaymentModalClose} variant="contained">Upload Payment Receipt</Button>
           </div>
         </Box>
       </Modal>
 
       {/* Feedback Modal */}
-      <Modal
-        open={feedbackModalOpen}
-        onClose={() => setFeedbackModalOpen(false)}
-      >
+      <Modal open={feedbackModalOpen} onClose={() => setFeedbackModalOpen(false)}>
         <Box style={{ ...modalStyle, width: 400 }}>
-          <Typography variant="h6">Please Rate Your Experience</Typography>
-          <Rating
-            value={rating}
-            onChange={(event, newValue) => setRating(newValue)}
-            style={{ marginBottom: '20px' }}
-          />
+          <Typography variant="h6">Feedback</Typography>
+          <Rating value={rating} onChange={(event, newValue) => setRating(newValue)} />
           <div style={{ marginTop: '20px' }}>
-            <Button onClick={handleFeedbackSubmit} variant="contained" color="primary">
-              Submit Feedback
-            </Button>
+            <Button onClick={handleFeedbackSubmit} variant="contained">Submit Feedback</Button>
           </div>
         </Box>
       </Modal>
     </Paper>
   );
-};
-
-const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  backgroundColor: 'white',
-  padding: '20px',
-  borderRadius: '8px',
 };
 
 export default BookingFeature;

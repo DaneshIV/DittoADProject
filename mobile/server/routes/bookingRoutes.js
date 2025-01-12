@@ -27,4 +27,15 @@ router.post('/bookings', async (req, res) => {
   }
 });
 
+router.get('/bookings', async (req, res) => {
+  try {
+    const bookings = await Booking.find();
+    res.json(bookings);
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
+    res.status(500).json({ message: 'Failed to fetch bookings. Please try again.' });
+  }
+});
+
+
 module.exports = router;
