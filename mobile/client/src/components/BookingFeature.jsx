@@ -22,6 +22,7 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import qrImage from "/public/QR.jpeg";
+import logo from '/public/JAAS_CLEAR.png';
 
 const modalStyle = {
   position: "absolute",
@@ -517,13 +518,26 @@ const BookingFeature = () => {
 
           {/* Booking Date and Time */}
           <div style={{ display: "flex", gap: "10px" }}>
-            <TextField
-              label="Appointment Date"
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              fullWidth
-            />
+          <TextField
+          label="Appointment Date"
+          type={isFocused ? "date" : "text"} // Always use 'date' when focused
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          fullWidth
+          onFocus={() => {setIsFocused(true);}} // Mark as focused when clicked
+          onBlur={(e) => {
+            setIsFocused(false); // Mark as blurred when focus is lost
+            if (!e.target.value) {
+              setSelectedDate(''); // Clear date if input is empty after blur
+            }
+          }}
+          slotProps={{
+            inputLabel: {
+              shrink: !!selectedDate || isFocused, // Shrink when focused or date is selected
+            },
+          }}
+        />
+
             <TextField
               label="Appointment Time"
               select
@@ -606,26 +620,65 @@ const BookingFeature = () => {
             onClose={() => setPaymentModalOpen(false)}
           >
             <Box style={{ ...modalStyle, width: 400 }}>
-              <Typography variant="h6">Upload Payment Receipt</Typography>
+            <Typography
+              variant="h5"
+              sx={{ color: "#bd212f", fontWeight: "bold", paddingBottom: "14px", textAlign: "center" }}
+            >
+              Upload Payment Receipt
+            </Typography>
+            <img src={logo} alt="Logo" style={{ height: '100px', width: '100px', margin: '0 0 0 150px' }} />
 
               {/* QR Code Section */}
-              <Typography variant="body2" style={{ margin: "10px 0" }}>
+              <Typography variant="body2" style={{ margin: "10px 0", textAlign: "center" }}>
                 Scan the QR Code below to make a payment:
               </Typography>
+              <Box 
+              backgroundColor='#ef2f68' 
+              style={{ 
+                display: 'flex',           // Flexbox for centering
+                justifyContent: 'center',  // Centers the box content horizontally
+                alignItems: 'center',      // Centers the box content vertically
+                flexDirection: 'column',   // Stacks the image and text vertically
+                textAlign: 'center',       // Centers the text inside the box
+                borderRadius: '8px',
+                padding: '2px 0',          // Adds 2px top and bottom padding in the box
+              }} 
+              width={'162px'} 
+              height={'168px'} 
+              margin={'0 auto 25px auto'}  // Centers the box horizontally and adds bottom margin
+            >
               <img
                 src={qrImage} // Replace with your QR code image URL
                 alt="QR Code for Payment"
                 style={{
                   width: "150px",
                   height: "150px",
-                  marginBottom: "20px",
+                  borderRadius: '8px',
                 }}
               />
+            
+              <Typography color = "white" variant="body2" style={{ margin: "2px 0", textAlign: "center", fontSize: '8px' }}>
+                MALAYSIA NATIONAL QR
+              </Typography>
+            </Box>
 
-              <input type="file" onChange={handleReceiptUpload} />
+              <input type="file" onChange={handleReceiptUpload} style={{ display: 'block', margin: '0 auto', marginLeft:'110px' }} />
+
               <div style={{ marginTop: "20px" }}>
-                <Button onClick={handlePaymentModalClose} variant="contained">
-                  Upload Payment Receipt
+                <Button onClick={handlePaymentModalClose} variant="contained"
+                  sx={{ 
+                    marginTop: 2,
+                    backgroundColor: '#bd212f', // Custom color
+                    borderRadius: '50px',      // Makes the button oval-shaped
+                    paddingX: 1,               // Optional: Adds horizontal padding for better shape
+                    paddingY: 1,  
+                    width: '80%',
+                    margin: '0 auto',
+                    display: 'block',
+                  }}
+  
+                >
+                  Upload
                 </Button>
               </div>
             </Box>

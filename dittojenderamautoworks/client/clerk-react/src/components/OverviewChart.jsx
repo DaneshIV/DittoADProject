@@ -19,14 +19,14 @@ const OverviewChart = ({ isDashboard = false, view }) => {
 
     // total sales line data
     const totalSalesLine = {
-      id: "totalSales",
+      id: "Total Sales",
       color: theme.palette.tables.lines,
       data: [],
     };
 
     // total units line data
     const totalUnitsLine = {
-      id: "totalUnits",
+      id: "Total Units",
       color: theme.palette.tables.lines,
       data: [],
     };

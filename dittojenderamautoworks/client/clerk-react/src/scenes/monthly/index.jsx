@@ -23,14 +23,14 @@ const Monthly = () => {
 
     // total sales line
     const totalSalesLine = {
-      id: "totalSales",
+      id: "Total Sales",
       color: theme.palette.tables.lines,
       data: [],
     };
 
     // total units line
     const totalUnitsLine = {
-      id: "totalUnits",
+      id: "Total Units",
       color: theme.palette.tables.anotherLine,
       data: [],
     };
@@ -72,8 +72,8 @@ const Monthly = () => {
             data={formattedData}
             colors={({ id }) => {
               // Map each line id to a theme color
-              if (id === "totalSales") return theme.palette.tables.lines;
-              if (id === "totalUnits") return theme.palette.tables.anotherLine;
+              if (id === "Total Sales") return theme.palette.tables.lines;
+              if (id === "Total Units") return theme.palette.tables.anotherLine;
               return "#000"; // Fallback color
             }}
             theme={{
