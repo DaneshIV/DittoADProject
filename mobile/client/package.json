@@ -16,7 +16,8 @@
     "axios": "^1.7.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.28.1"
+    "react-router-dom": "^6.28.1",
+    "resend": "^4.0.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^3.0.0",
