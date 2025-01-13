@@ -10,6 +10,7 @@ import { UserButton } from "@clerk/clerk-react";
 
 function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   const handleTabChange = (event, newValue) => {
@@ -18,6 +19,10 @@ function Dashboard() {
 
   const handleBookAppointment = () => {
     navigate('/book-appointment');
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
   };
 
   const cars = [
@@ -111,9 +116,11 @@ function Dashboard() {
     },
   ];
 
-  const filteredCars = selectedCategory === 'ALL'
-    ? cars
-    : cars.filter((car) => car.category === selectedCategory);
+  const filteredCars = cars.filter((car) => {
+    const matchesCategory = selectedCategory === 'ALL' || car.category === selectedCategory;
+    const matchesSearch = car.title.toLowerCase().includes(searchQuery.toLowerCase()) || car.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div>     
@@ -136,6 +143,8 @@ function Dashboard() {
       <TextField
         id="input-with-icon-textfield"
         variant="filled"
+        value={searchQuery}
+        onChange={handleSearchChange}
         slotProps={{
           input: {
             startAdornment: (
@@ -143,7 +152,7 @@ function Dashboard() {
                 <SearchIcon sx={{paddingBottom: '12px'}}/>
               </InputAdornment>
             ),
-          disableUnderline: true,
+            disableUnderline: true,
           },
         }}
         sx={{
