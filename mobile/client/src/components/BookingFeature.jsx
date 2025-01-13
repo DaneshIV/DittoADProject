@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
-
+import qrImage from '/public/QR.jpeg';1
 
 const modalStyle = {
   position: 'absolute',
@@ -436,6 +436,17 @@ const BookingFeature = () => {
       <Modal open={paymentModalOpen} onClose={() => setPaymentModalOpen(false)}>
         <Box style={{ ...modalStyle, width: 400 }}>
           <Typography variant="h6">Upload Payment Receipt</Typography>
+
+          {/* QR Code Section */}
+    <Typography variant="body2" style={{ margin: '10px 0' }}>
+      Scan the QR Code below to make a payment:
+    </Typography>
+    <img
+      src={qrImage}// Replace with your QR code image URL
+      alt="QR Code for Payment"
+      style={{ width: '150px', height: '150px', marginBottom: '20px' }}
+    />
+
           <input type="file" onChange={handleReceiptUpload} />
           <div style={{ marginTop: '20px' }}>
             <Button onClick={handlePaymentModalClose} variant="contained">Upload Payment Receipt</Button>
