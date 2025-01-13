@@ -2,8 +2,9 @@ import { SignIn, useUser} from "@clerk/clerk-react";
 import { Box, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useEffect } from 'react';
+import logoImage from "/JAAS_CLEAR.png";
 import { neobrutalism } from '@clerk/themes';
-import logoImage from "../assets/JAAS_CLEAR.png";
+
 
 export default function LoginWrapper() {
     const { isSignedIn } = useUser();
@@ -13,7 +14,7 @@ export default function LoginWrapper() {
         if (isSignedIn) {
             navigate("/dashboard");
         }
-    }, [isSignedIn, navigate]); 
+    }, [isSignedIn, navigate]);
 
     return (
         <Container 
@@ -25,7 +26,7 @@ export default function LoginWrapper() {
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center', 
-                backgroundColor: '#ebe4e4'
+                backgroundColor: '#f4f5f4'
             }}
         >
             <Box sx={{ p: 3 }}>
@@ -41,10 +42,11 @@ export default function LoginWrapper() {
                             card: {
                                 borderRadius: '16px', // Adjust the value to make the corners more or less rounded
                               },
+
                             logoBox: {
                                 height: '100px',          
                                 //width: '80px', 
-                                margin: '0 auto', 
+                                margin: '0px 0px 0px 120px', 
                             },
                         },
 
