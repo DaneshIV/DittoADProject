@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { setMode } from "../state";
-import { useClerk, UserButton } from "@clerk/clerk-react";
+import { UserButton } from "@clerk/clerk-react";
 import {
   AppBar,
   useTheme,
@@ -16,12 +16,10 @@ import {
   Menu as MenuIcon,
   Search,
   SettingsOutlined,
-  GitHub,
 } from "@mui/icons-material";
 
 import { FlexBetween } from ".";
 
-// Navbar
 const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -29,9 +27,13 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   return (
     <AppBar
       sx={{
-        position: "static",
+        position: "sticky",
         background: "none",
+        backgroundColor: theme.palette.background.default,
         boxShadow: "none",
+        top: 0,
+        zIndex: 1100,
+        
       }}
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
@@ -40,6 +42,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           {/* Sidebar Menu */}
           <IconButton
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            sx={{ color: theme.palette.icons.inactive }}
             title="Toggle Sidebar"
           >
             <MenuIcon />
@@ -49,32 +52,40 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           <FlexBetween
             backgroundColor={theme.palette.background.alt}
             borderRadius="9px"
-            gap="3rem"
-            p="0.1rem 1.5rem"
+            gap="1rem"
+            p="0.1rem 1rem"
             title="Search"
           >
             <InputBase placeholder="Search..." />
             <IconButton>
-              <Search />
+              <Search sx={{ color: theme.palette.icons.inactive }} />
             </IconButton>
           </FlexBetween>
         </FlexBetween>
 
         {/* Right Side */}
         <FlexBetween gap="1.5rem">
-          
           {/* Dark/Light Mode */}
-          <IconButton onClick={() => dispatch(setMode())} title="Dark Mode">
+          <IconButton
+            onClick={() => dispatch(setMode())}
+            title="Toggle Dark/Light Mode"
+          >
             {theme.palette.mode === "dark" ? (
-              <DarkModeOutlined sx={{ fontSize: "25px" }} />
+              <LightModeOutlined
+                sx={{ color: theme.palette.icons.inactive, fontSize: "25px" }}
+              />
             ) : (
-              <LightModeOutlined sx={{ fontSize: "25px" }} />
+              <DarkModeOutlined
+                sx={{ color: theme.palette.icons.inactive, fontSize: "25px" }}
+              />
             )}
           </IconButton>
 
           {/* Settings */}
-          <IconButton title="Setting">
-            <SettingsOutlined sx={{ fontSize: "25px" }} />
+          <IconButton title="Settings">
+            <SettingsOutlined
+              sx={{ color: theme.palette.icons.inactive, fontSize: "25px" }}
+            />
           </IconButton>
 
           {/* User Profile */}
@@ -86,5 +97,3 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 };
 
 export default Navbar;
-
-//PADU ANUSHKA 
