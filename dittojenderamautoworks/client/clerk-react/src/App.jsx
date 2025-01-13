@@ -22,6 +22,7 @@ import {
   Breakdown,
   Admin,
   Performance,
+  Appointments,
 } from "./scenes";
 import { useUser } from "@clerk/clerk-react";
 import LoginWrapper from "./components/LoginWrapper";
@@ -64,6 +65,7 @@ function App() {
                   <Route path="/breakdown" element={<Breakdown />} />
                   <Route path="/admin" element={<Admin />} />
                   <Route path="/performance" element={<Performance />} />
+                  <Route path="/appointments" element={<Appointments />} />
                 </>
               ) : (
                 <Route path="*" element={<Navigate to="/login" replace />} />

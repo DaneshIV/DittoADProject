@@ -31,6 +31,7 @@ import {
 } from "@mui/icons-material";
 
 import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
+import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCalendarOutlined';
 
 import { FlexBetween } from ".";
 import profileImage from "../assets/profile.jpeg";
@@ -49,6 +50,10 @@ const navItems = [
   {
     text: "Products",
     icon: <ShoppingCartOutlined />,
+  },
+  {
+    text: "Appointments",
+    icon: <PermContactCalendarOutlinedIcon />,
   },
   {
     text: "Customers",
@@ -248,35 +253,8 @@ const Sidebar = ({
 
           {/* User */}
           <Box pb="1rem">
-            <Divider sx={{ mt: 3 }}/>
             <FlexBetween textTransform="none" gap="1rem" m="1.5rem 2rem 0rem 3rem">
-              <Box
-                component="img"
-                alt="profile"
-                src={profileImage}
-                height="40px"
-                width="40px"
-                borderRadius="50%"
-                sx={{ objectFit: "cover" }}
-              />
-              <Box textAlign="left">
-                <Typography
-                  fontWeight="bold"
-                  fontSize="0.9rem"
-                  sx={{ color: theme.palette.secondary.main }}
-                >
-                  {user.name}
-                </Typography>
-                <Typography
-                  fontSize="0.8rem"
-                  sx={{ color: theme.palette.secondary.main }}
-                >
-                  {user.occupation}
-                </Typography>
-              </Box>
-              <SettingsOutlined
-                sx={{ color: theme.palette.icons.inactive, fontSize: "25px" }}
-              />
+                           
             </FlexBetween>
           </Box>
         </Drawer>

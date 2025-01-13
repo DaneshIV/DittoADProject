@@ -81,13 +81,6 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
             )}
           </IconButton>
 
-          {/* Settings */}
-          <IconButton title="Settings">
-            <SettingsOutlined
-              sx={{ color: theme.palette.icons.inactive, fontSize: "25px" }}
-            />
-          </IconButton>
-
           {/* User Profile */}
           <UserButton />
         </FlexBetween>

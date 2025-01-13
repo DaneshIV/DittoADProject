@@ -7,6 +7,7 @@ import ProductStat from "../models/ProductStat.js";
 import User from "../models/User.js";
 import Transaction from "../models/Transaction.js";
 import Feedback from "../models/Feedback.js";
+import Appointments from "../models/Appointments.js";
 
 // Get Products
 export const getProducts = async (_, res) => {
@@ -129,6 +130,16 @@ export const getFeedback = async (req, res) => {
     res.status(200).json(feedback);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+// Get Appointments
+export const getAppointments = async (req, res) => {
+  try {
+    const appointments = await Appointments.find();
+    res.status(200).json(appointments);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
   }
 };
 

@@ -13,6 +13,7 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
+
 import { DataGrid } from "@mui/x-data-grid";
 
 import { useGetDashboardQuery } from "../../state/api";
@@ -68,14 +69,15 @@ const Dashboard = () => {
     <Box m="1.5rem 2.5rem">
       <FlexBetween>
         {/* Header */}
-        <Header title="DASHBOARD" subtitle="Welcome to your dashboard"
+        <Header title="DASHBOARD" subtitle="Welcome to your dashboard."
          />
 
         {/* Content */}
         <Box>
           
           {/* Download Reports */}
-          <Button
+          {/*<Button
+            onClick={handleDownload}
             sx={{
               backgroundColor: theme.palette.button,
               color: theme.palette.background.alt,
@@ -91,7 +93,7 @@ const Dashboard = () => {
           >
             <DownloadOutlined sx={{ mr: "10px" }} />
             Download Reports
-          </Button>
+          </Button>*/}
         </Box>
       </FlexBetween>
 
@@ -243,12 +245,12 @@ const Dashboard = () => {
           <Typography
             p="0 0.6rem"
             fontSize="0.8rem"
+            textAlign={"center"}
             sx={{
               color: theme.palette.grey[1000],
             }}
           >
-            Breakdown of real states and information via category for revenue
-            made for this year and total sales
+            Breakdown of units sold by category, and overall sales.
           </Typography>
         </Box>
       </Box>

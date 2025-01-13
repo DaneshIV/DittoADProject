@@ -2,14 +2,15 @@ import React from "react";
 import { Box, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 
-import { useGetAdminsQuery } from "../../state/api";
-import { Header, CustomColumnMenu } from "../../components";
+import { useGetAppointmentsQuery } from "../../state/api";
+import { Header } from "../../components";
 
-const Admin = () => {
+// Appointments
+const Appointments = () => {
   // theme
   const theme = useTheme();
   // get data
-  const { data, isLoading } = useGetAdminsQuery();
+  const { data, isLoading } = useGetAppointmentsQuery();
 
   // data columns
   const columns = [
@@ -19,36 +20,40 @@ const Admin = () => {
       flex: 1,
     },
     {
-      field: "name",
-      headerName: "Name",
-      flex: 0.5,
-    },
-    {
-      field: "email",
-      headerName: "Email",
+      field: "carType",
+      headerName: "Car Type",
       flex: 1,
     },
     {
-      field: "phoneNumber",
-      headerName: "Phone Number",
-      flex: 0.5,
-      renderCell: (params) => {
-        return params.value.replace(/^(\d{3})(\d{3})(\d{4})/, "($1) $2-$3"); // format phone number (123) 456-7890
-      },
-    },
-    {
-      field: "country",
-      headerName: "Country",
-      flex: 0.4,
-    },
-    {
-      field: "occupation",
-      headerName: "Occupation",
+      field: "paintJob",
+      headerName: "Paint Job",
       flex: 1,
     },
     {
-      field: "role",
-      headerName: "Role",
+      field: "additionalServices",
+      headerName: "Additional Services",
+      flex: 1,
+      renderCell: (params) => (params.value.length > 0 ? params.value.join(", ") : "None"),
+    },
+    {
+      field: "totalPrice",
+      headerName: "Total Price (RM)",
+      flex: 0.5,
+    },
+    {
+      field: "appointmentDate",
+      headerName: "Appointment Date",
+      flex: 0.5,
+      renderCell: (params) => new Date(params.value).toLocaleDateString(),
+    },
+    {
+      field: "appointmentTime",
+      headerName: "Appointment Time",
+      flex: 0.5,
+    },
+    {
+      field: "carNumberPlate",  
+      headerName: "Car Number Plate",
       flex: 0.5,
     },
   ];
@@ -56,7 +61,7 @@ const Admin = () => {
   return (
     <Box m="1.5rem 2.5rem">
       {/* Header */}
-      <Header title="ADMINS" subtitle="Managing admins and list of admins." />
+      <Header title="APPOINTMENTS" subtitle="Manage customer appointments." />
 
       {/* Content */}
       <Box
@@ -71,7 +76,6 @@ const Admin = () => {
           },
           "& .MuiDataGrid-columnHeaders": {
             backgroundColor: theme.palette.tables.background,
-            //color: theme.palette.secondary[100],
             borderBottom: "none",
           },
           "& .MuiDataGrid-virtualScroller": {
@@ -82,27 +86,21 @@ const Admin = () => {
             color: theme.palette.secondary[100],
             borderTop: "none",
           },
-          "& .MuiDataGrid-toolbarContainer .MuiButtom-text": {
-            color: `${theme.palette.secondary[200]} !important`,
-          },
           "& .MuiDataGrid-columnHeaderTitle": {
             color: theme.palette.secondary.main,
           },
         }}
       >
-        {/* Grid Table */}
+        {/* Grid table */}
         <DataGrid
           loading={isLoading || !data}
           getRowId={(row) => row._id}
           rows={data || []}
           columns={columns}
-          components={{
-            ColumnMenu: CustomColumnMenu,
-          }}
         />
       </Box>
     </Box>
   );
 };
 
-export default Admin;
+export default Appointments;

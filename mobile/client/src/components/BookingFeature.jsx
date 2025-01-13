@@ -183,7 +183,8 @@ const BookingFeature = () => {
           style: "currency",
           currency: "MYR",
         }).format(totalPrice),
-        car_plate: carNumberPlate
+        car_plate: carNumberPlate,
+        reply_to: customerEmail
       };
 
       await emailjs.send(
