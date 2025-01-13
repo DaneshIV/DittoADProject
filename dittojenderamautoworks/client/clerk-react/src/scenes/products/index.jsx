@@ -44,7 +44,7 @@ const Product = ({
         {/* Category */}
         <Typography
           sx={{ fontSize: 14 }}
-          color={theme.palette.secondary[700]}
+          color={theme.palette.secondary.alt}
           gutterBottom
         >
           {category}
@@ -56,8 +56,8 @@ const Product = ({
         </Typography>
 
         {/* Price */}
-        <Typography sx={{ mb: "1.5rem" }} color={theme.palette.secondary[400]}>
-          ${Number(price).toFixed(2)}
+        <Typography sx={{ mb: "1.5rem" }} color={theme.palette.secondary.light}>
+          RM {Number(price).toFixed(2)}
         </Typography>
 
         {/* Rating */}

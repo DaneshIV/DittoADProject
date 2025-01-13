@@ -30,8 +30,11 @@ import {
   PieChartOutlined,
 } from "@mui/icons-material";
 
+import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
+
 import { FlexBetween } from ".";
 import profileImage from "../assets/profile.jpeg";
+import logoImage from "../assets/JAAS.png";
 
 // Nav items
 const navItems = [
@@ -56,9 +59,13 @@ const navItems = [
     icon: <ReceiptLongOutlined />,
   },
   {
+    text: "Feedback",
+    icon: <RateReviewOutlinedIcon />,
+  },
+  /*{
     text: "Geography",
     icon: <PublicOutlined />,
-  },
+  },*/
   {
     text: "Sales",
     icon: null,
@@ -124,7 +131,7 @@ const Sidebar = ({
           sx={{
             width: drawerWidth,
             "& .MuiDrawer-paper": {
-              color: theme.palette.secondary[200],
+              color: theme.palette.secondary.main,
               backgroundColor: theme.palette.background.alt,
               boxSizing: "border-box",
               borderWidth: isNonMobile ? 0 : "2px",
@@ -137,9 +144,14 @@ const Sidebar = ({
         >
           <Box width="100%">
             {/* Brand Info */}
-            <Box m="1.5rem 2rem 2rem 3rem">
+            <Box m="2rem 2rem 2rem 0.8rem">
               <FlexBetween color={theme.palette.secondary.main}>
                 <Box display="flex" alignItems="center" gap="0.5rem">
+                <img
+                  src={logoImage}
+                  alt="Logo"
+                  style={{ height: '75px', width: '75px', borderRadius: '50%' }} // Adjust size as needed
+                />
                   <Typography
                     variant="h4"
                     fontWeight="bold"
@@ -149,10 +161,11 @@ const Sidebar = ({
                     }}
                     sx={{
                       cursor: "pointer",
+                      margin: "0.5rem 0",
                     }}
-                    title="ECOMVISION"
+                    title="JENDERAM"
                   >
-                    ECOMVISION
+                    JENDERAM AUTOWORKS
                   </Typography>
                 </Box>
                 {/* Mobile Sidebar Toggle Icon */}
@@ -189,14 +202,23 @@ const Sidebar = ({
                         setActive(lcText);
                       }}
                       sx={{
-                        backgroundColor:
+                        backgroundColor: //button background colour
                           active === lcText
-                            ? theme.palette.secondary[300]
+                            ? theme.palette.button.background
                             : "transparent",
-                        color:
+                        color:            //text colour
                           active === lcText
-                            ? theme.palette.primary[600]
-                            : theme.palette.secondary[100],
+                            ? theme.palette.button.inactiveText
+                            : theme.palette.button.activeText,
+                        
+                        "&:hover": {
+                          backgroundColor: theme.palette.button.inactiveText,
+                          color: theme.palette.secondary.light,
+
+                          "& .MuiListItemIcon-root": {
+                            color: theme.palette.secondary.light, // Update icon color on hover
+                          },
+                        },
                       }}
                     >
                       {/* icon */}
@@ -205,8 +227,8 @@ const Sidebar = ({
                           ml: "2rem",
                           color:
                             active === lcText
-                              ? theme.palette.primary[600]
-                              : theme.palette.secondary[200],
+                              ? theme.palette.icons.active
+                              : theme.palette.icons.inactive,
                         }}
                       >
                         {icon}
@@ -226,8 +248,8 @@ const Sidebar = ({
 
           {/* User */}
           <Box pb="1rem">
-            <Divider />
-            <FlexBetween textTransform="none" gap="1rem" m="1.5rem 2rem 0 3rem">
+            <Divider sx={{ mt: 3 }}/>
+            <FlexBetween textTransform="none" gap="1rem" m="1.5rem 2rem 0rem 3rem">
               <Box
                 component="img"
                 alt="profile"
@@ -241,19 +263,19 @@ const Sidebar = ({
                 <Typography
                   fontWeight="bold"
                   fontSize="0.9rem"
-                  sx={{ color: theme.palette.secondary[100] }}
+                  sx={{ color: theme.palette.secondary.main }}
                 >
                   {user.name}
                 </Typography>
                 <Typography
                   fontSize="0.8rem"
-                  sx={{ color: theme.palette.secondary[200] }}
+                  sx={{ color: theme.palette.secondary.main }}
                 >
                   {user.occupation}
                 </Typography>
               </Box>
               <SettingsOutlined
-                sx={{ color: theme.palette.secondary[300], fontSize: "25px" }}
+                sx={{ color: theme.palette.icons.inactive, fontSize: "25px" }}
               />
             </FlexBetween>
           </Box>
