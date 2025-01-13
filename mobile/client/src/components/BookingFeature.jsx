@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import emailjs from '@emailjs/browser';
 import axios from "axios";
 import {
   Button,
@@ -35,11 +36,10 @@ const modalStyle = {
 };
 
 const BookingFeature = () => {
+
   const [selectedCarType, setSelectedCarType] = useState("");
   const [selectedPaintJob, setSelectedPaintJob] = useState("");
-  const [selectedAdditionalServices, setSelectedAdditionalServices] = useState(
-    []
-  );
+  const [selectedAdditionalServices, setSelectedAdditionalServices] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
@@ -51,7 +51,11 @@ const BookingFeature = () => {
   const [rating, setRating] = useState(0);
   const [isReceiptUploaded, setIsReceiptUploaded] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-
+  const [customerEmail, setCustomerEmail] = useState("");
+  useEffect(() => {
+    // Initialize EmailJS with your public key
+    emailjs.init("a0jGcvkpfVrPtcgzg");
+  }, []);
   const navigate = useNavigate();
 
   const priceList = [
@@ -166,13 +170,42 @@ const BookingFeature = () => {
     }
   };
 
+  const sendConfirmationEmail = async (bookingDetails) => {
+    try {
+      const templateParams = {
+        to_email: customerEmail,
+        booking_date: selectedDate,
+        booking_time: selectedTime,
+        car_type: selectedCarType,
+        paint_job: selectedPaintJob,
+        additional_services: selectedAdditionalServices.join(", "),
+        total_price: new Intl.NumberFormat("en-MY", {
+          style: "currency",
+          currency: "MYR",
+        }).format(totalPrice),
+        car_plate: carNumberPlate
+      };
+
+      await emailjs.send(
+        'service_3i3kgzq',
+        'AnushkaPadu_9812o8712',
+        templateParams
+      );
+
+      console.log('Confirmation email sent successfully');
+    } catch (error) {
+      console.error('Error sending confirmation email:', error);
+    }
+  };
+
   const handleBooking = async () => {
     if (
       !selectedCarType ||
       !selectedPaintJob ||
       !selectedDate ||
       !selectedTime ||
-      !carNumberPlate
+      !carNumberPlate ||
+      !customerEmail
     ) {
       alert("All fields are required!");
       return;
@@ -186,6 +219,7 @@ const BookingFeature = () => {
       appointmentDate: selectedDate,
       appointmentTime: selectedTime,
       carNumberPlate,
+      customerEmail
     };
 
     try {
@@ -193,14 +227,14 @@ const BookingFeature = () => {
         "http://localhost:5001/api/bookings",
         bookingData
       );
-      setBookingStatus("Booking confirmed!");
+      await sendConfirmationEmail(bookingData);
+      setBookingStatus("Booking confirmed! Check your email for details.");
       setPaymentModalOpen(true);
     } catch (error) {
       setBookingStatus("Failed to save booking. Please try again.");
       console.error("Error creating booking:", error);
     }
   };
-
   const printInvoice = () => {
     if (!selectedCarType || !selectedPaintJob) {
       alert("Please complete the booking details before printing the invoice.");
@@ -407,6 +441,14 @@ const BookingFeature = () => {
           >
             Book an Appointment
           </Typography>
+          <TextField
+            label="Email Address"
+            value={customerEmail}
+            onChange={(e) => setCustomerEmail(e.target.value)}
+            fullWidth
+            type="email"
+            style={{ marginBottom: "20px" }}
+          />
 
           {/* Car Type Select */}
           <FormControl
