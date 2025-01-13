@@ -14,6 +14,7 @@ import Breakdown from "./breakdown";
 import Admin from "./admin";
 import Performance from "./performance";
 import Feedback from "./feedback";
+import Appointments from "./appointments";
 
 // export scenes
 export {
@@ -30,4 +31,5 @@ export {
   Admin,
   Performance,
   Feedback,
+  Appointments,
 };

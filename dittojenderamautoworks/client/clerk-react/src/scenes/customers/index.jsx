@@ -57,7 +57,7 @@ const Customers = () => {
   return (
     <Box m="1.5rem 2.5rem">
       {/* Header */}
-      <Header title="CUSTOMERS" subtitle="List of Customers" />
+      <Header title="CUSTOMERS" subtitle="List of customers." />
 
       {/* Content */}
       <Box

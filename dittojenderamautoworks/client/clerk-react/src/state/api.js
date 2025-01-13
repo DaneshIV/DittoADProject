@@ -20,6 +20,7 @@ export const api = createApi({
     "Performance",
     "Dashboard",
     "Feedback",
+    "Appointments",
   ],
   // endpoints
   endpoints: (build) => ({
@@ -67,6 +68,10 @@ export const api = createApi({
       query: () => "client/feedback",
       providesTags: ["Feedback"],
     }),
+    getAppointments: build.query({
+      query: () => "client/appointments",
+      providesTags: ["Appointments"],
+    }),
   }),
 });
 
@@ -82,4 +87,5 @@ export const {
   useGetUserPerformanceQuery,
   useGetDashboardQuery,
   useGetFeedbackQuery,
+  useGetAppointmentsQuery,
 } = api;

@@ -6,6 +6,7 @@ import {
   getTransactions,
   getGeography,
   getFeedback,
+  getAppointments,
 } from "../controllers/client.js";
 
 const router = express.Router();
@@ -16,5 +17,6 @@ router.get("/customers", getCustomers);
 router.get("/transactions", getTransactions);
 router.get("/geography", getGeography);
 router.get("/feedback", getFeedback);
+router.get("/appointments", getAppointments);
 
 export default router;

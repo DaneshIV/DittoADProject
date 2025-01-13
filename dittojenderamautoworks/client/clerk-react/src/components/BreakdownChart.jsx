@@ -19,7 +19,7 @@ const BreakdownChart = ({ isDashboard = false }) => {
   }
 
   // theme colors
-  const colors = ['#DC2A4B', '#941C32', '#A15DE4', '#D9863D'];
+  const colors = ['#c72467','#ba449d','#9565c9','#b3717a','#DC2A4B', '#941C32', '#A15DE4', '#D9863D'];
 
   // formatted data
   const formattedData = Object.entries(data.salesByCategory).map(
@@ -105,6 +105,7 @@ const BreakdownChart = ({ isDashboard = false }) => {
     </Box>
 
     {/* Legends in a separate box */}
+    {!isDashboard && (
     <Box
       display="flex"
       justifyContent="center"
@@ -129,6 +130,7 @@ const BreakdownChart = ({ isDashboard = false }) => {
         </Box>
       ))}
     </Box>
+    )}
 
       {/* Pie chart center */}
       <Box
@@ -136,15 +138,13 @@ const BreakdownChart = ({ isDashboard = false }) => {
         alignItems="center"
         justifyContent="center"
         position="absolute"
-        top={0}
-        bottom={isDashboard ? 60 : 50}
-        left={0}
-        right={0}
-        width={isDashboard ? "100%" : "100%"}
-        height={isDashboard ? "80%" : "90%"}
-        maxWidth="100px" // Adjust to match your text area
-        maxHeight="50px"
-        margin="auto"
+        top={isDashboard ? "47%" : 0}
+        bottom={isDashboard ? "auto" : 50}
+        left={0} // Centered horizontally
+        right={isDashboard ? "100%" : 0} 
+        transform={isDashboard ? "translate(-50%, -50%)" : "none"}
+        width="100%"
+        height="auto"
         color={theme.palette.secondary.light}
         textAlign="center"
         pointerEvents="none"
